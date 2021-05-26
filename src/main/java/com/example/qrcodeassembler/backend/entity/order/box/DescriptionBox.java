@@ -1,13 +1,11 @@
 package com.example.qrcodeassembler.backend.entity.order.box;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "description_box")
 public class DescriptionBox {
 
     @Id
@@ -18,17 +16,22 @@ public class DescriptionBox {
     private int count;
     private int numberLine;
 
+    @ManyToOne
+    @JoinColumn(name = "number_variant")
+    private VariantBox variantBox;
+
     public DescriptionBox() {
         this.barcode = "";
         this.count = 0;
         this.numberLine = 0;
     }
 
-    public DescriptionBox(UUID id, String barcode, int count, int numberLine) {
+    public DescriptionBox(UUID id, String barcode, int count, int numberLine, VariantBox variantBox) {
         this.id = id;
         this.barcode = barcode;
         this.count = count;
         this.numberLine = numberLine;
+        this.variantBox = variantBox;
     }
 
 
