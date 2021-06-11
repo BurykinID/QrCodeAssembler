@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface StateDBRepository extends JpaRepository<StateDataBase, Long> {
+public interface StateDataBaseRepository extends JpaRepository<StateDataBase, Long> {
 
     @Query("select state from StateDataBase state order by state.id desc")
     List<StateDataBase> findAllSortByIdDesc();

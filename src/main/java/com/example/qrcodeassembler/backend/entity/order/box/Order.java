@@ -1,5 +1,10 @@
 package com.example.qrcodeassembler.backend.entity.order.box;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Date;
@@ -7,6 +12,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity(name = "ord")
+@Getter
+@Setter
+@ToString
 public class Order {
 
     @Id
@@ -16,6 +24,7 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "order")
     private List<VariantBox> variantBoxes;
 
@@ -27,39 +36,6 @@ public class Order {
         this.number = number;
         this.status = status;
         this.date = date;
-        this.variantBoxes = variantBoxes;
-    }
-
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public List<VariantBox> getVariantBoxes() {
-        return variantBoxes;
-    }
-
-    public void setVariantBoxes(List<VariantBox> variantBoxes) {
         this.variantBoxes = variantBoxes;
     }
 
@@ -89,12 +65,4 @@ public class Order {
         return Objects.hash(number, status, date);
     }
 
-    @Override
-    public String toString() {
-        return "Order=[" +
-                "number=" + number +
-                ",status=" + status +
-                ",date=" + date +
-                "]";
-    }
 }

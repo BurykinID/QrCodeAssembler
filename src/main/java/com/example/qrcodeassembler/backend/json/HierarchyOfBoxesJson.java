@@ -1,5 +1,12 @@
 package com.example.qrcodeassembler.backend.json;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
 public class HierarchyOfBoxesJson {
 
     private String numberContainer;
@@ -14,30 +21,4 @@ public class HierarchyOfBoxesJson {
         this.numberBox = numberBox;
         this.date = date;
     }
-
-
-    public String getNumberContainer() {
-        return numberContainer;
-    }
-
-    public void setNumberContainer(String numberContainer) {
-        this.numberContainer = numberContainer;
-    }
-
-    public String getNumberBox() {
-        return numberBox;
-    }
-
-    public void setNumberBox(String numberBox) {
-        this.numberBox = numberBox;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
 }

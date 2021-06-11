@@ -1,11 +1,19 @@
 package com.example.qrcodeassembler.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity(name = "mark")
+@Getter
+@Setter
+@ToString
 public class Mark {
 
     @Id
@@ -36,47 +44,15 @@ public class Mark {
     }
 
 
-    public String getCis() {
-        return cis;
-    }
-
-    public void setCis(String cis) {
-        this.cis = cis;
-    }
-
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(String barcode) {
+    public void updateMark(String barcode, String numberBox, String numberOrder, Date date) {
         this.barcode = barcode;
-    }
-
-    public String getNumberOrder() {
-        return numberOrder;
-    }
-
-    public void setNumberOrder(String numberOrder) {
-        this.numberOrder = numberOrder;
-    }
-
-    public String getNumberBox() {
-        return numberBox;
-    }
-
-    public void setNumberBox(String numberBox) {
         this.numberBox = numberBox;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
+        this.numberOrder = numberOrder;
         this.date = date;
     }
 
-    @Override
+
+   @Override
     public boolean equals(Object comparedObject) {
         if (this == comparedObject) {
             return true;
@@ -102,24 +78,4 @@ public class Mark {
     public int hashCode() {
         return Objects.hash(cis, barcode, numberOrder, numberBox, date);
     }
-
-    @Override
-    public String toString() {
-        return "Mark=[" +
-                "cis=" + cis +
-                ",barcode=" + barcode +
-                ",numberOrder=" + numberOrder +
-                ",numberBox=" + numberBox +
-                ",date=" + date +
-                "]";
-    }
-
-
-    public void updateMark(String barcode, String numberBox, String numberOrder, Date date) {
-        this.barcode = barcode;
-        this.numberBox = numberBox;
-        this.numberOrder = numberOrder;
-        this.date = date;
-    }
-
 }

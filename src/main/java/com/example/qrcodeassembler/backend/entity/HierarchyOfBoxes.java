@@ -1,6 +1,9 @@
 package com.example.qrcodeassembler.backend.entity;
 
 import com.example.qrcodeassembler.backend.json.HierarchyOfBoxesJson;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.text.ParseException;
@@ -10,11 +13,15 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@ToString
 public class HierarchyOfBoxes {
 
     @Id
     @GeneratedValue
-    private UUID id;
+    @ToString.Exclude
+    private long id;
     private String numberContainer;
     private String numberBox;
     @Temporal(TemporalType.TIMESTAMP)
@@ -26,43 +33,10 @@ public class HierarchyOfBoxes {
         date = new Date();
     }
 
-    public HierarchyOfBoxes(UUID id, String numberContainer, String numberBox, Date date) {
+    public HierarchyOfBoxes(long id, String numberContainer, String numberBox, Date date) {
         this.id = id;
         this.numberContainer = numberContainer;
         this.numberBox = numberBox;
-        this.date = date;
-    }
-
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getNumberContainer() {
-        return numberContainer;
-    }
-
-    public void setNumberContainer(String numberContainer) {
-        this.numberContainer = numberContainer;
-    }
-
-    public String getNumberBox() {
-        return numberBox;
-    }
-
-    public void setNumberBox(String numberBox) {
-        this.numberBox = numberBox;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -82,7 +56,7 @@ public class HierarchyOfBoxes {
 
         HierarchyOfBoxes castObject = (HierarchyOfBoxes) comparedObject;
 
-        return castObject.getId().equals(id) &&
+        return castObject.getId() == id &&
                 castObject.getNumberContainer().equals(numberContainer) &&
                 castObject.getNumberBox().equals(numberBox) &&
                 castObject.getDate().equals(date);
@@ -92,22 +66,4 @@ public class HierarchyOfBoxes {
     public int hashCode() {
         return Objects.hash(id, numberContainer, numberBox, date);
     }
-
-    @Override
-    public String toString() {
-        return "Container=[" +
-                "id=" + id +
-                ",numberContainer=" + numberContainer +
-                ",numberBox=" + numberBox +
-                ",date=" + date +
-                "]";
-    }
-
-
-    public void update(HierarchyOfBoxesJson json) throws ParseException {
-        this.numberBox = json.getNumberBox();
-        this.numberContainer = json.getNumberContainer();
-        this.date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(json.getDate());
-    }
-
 }

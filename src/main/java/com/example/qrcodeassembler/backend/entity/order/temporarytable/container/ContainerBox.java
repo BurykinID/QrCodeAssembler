@@ -1,5 +1,9 @@
 package com.example.qrcodeassembler.backend.entity.order.temporarytable.container;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -7,60 +11,31 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@ToString
 public class ContainerBox {
 
     @Id
     @GeneratedValue
-    private UUID id;
+    @ToString.Exclude
+    private long id;
     private String numberContainer;
     private String numberBox;
     private String macAddress;
 
 
     public ContainerBox() {
-        id = null;
+        id = 0;
         numberContainer = "";
         numberBox = "";
         macAddress = "";
     }
 
-    public ContainerBox(UUID id, String numberBox, String numberContainer, String macAddress) {
+    public ContainerBox(long id, String numberBox, String numberContainer, String macAddress) {
         this.id = id;
         this.numberContainer = numberContainer;
         this.numberBox = numberBox;
-        this.macAddress = macAddress;
-    }
-
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getNumberBox() {
-        return numberBox;
-    }
-
-    public void setNumberBox(String numberBox) {
-        this.numberBox = numberBox;
-    }
-
-    public String getNumberContainer() {
-        return numberContainer;
-    }
-
-    public void setNumberContainer(String nubmerContainer) {
-        this.numberContainer = nubmerContainer;
-    }
-
-    public String getMacAddress() {
-        return macAddress;
-    }
-
-    public void setMacAddress(String macAddress) {
         this.macAddress = macAddress;
     }
 
@@ -76,7 +51,7 @@ public class ContainerBox {
         }
 
         ContainerBox castObject = (ContainerBox) comparedObject;
-        return castObject.getId().equals(id) &&
+        return castObject.getId() == id &&
                 castObject.getNumberContainer().equals(numberContainer) &&
                 castObject.getNumberBox().equals(numberBox) &&
                 castObject.getMacAddress().equals(macAddress);
@@ -85,15 +60,5 @@ public class ContainerBox {
     @Override
     public int hashCode() {
         return Objects.hash(id, numberContainer, numberBox,  macAddress);
-    }
-
-    @Override
-    public String toString() {
-        return "ContainerBox=[" +
-                "id=" + id +
-                ",numberContainer=" + numberContainer +
-                ",numberBox=" + numberBox +
-                ",macAddress=" + macAddress +
-                "]";
     }
 }

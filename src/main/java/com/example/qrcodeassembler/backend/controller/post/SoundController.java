@@ -28,7 +28,7 @@ public class SoundController {
         try {
             for (MultipartFile file : files) {
                 Sound sound = soundRepo.findByFilename(file.getOriginalFilename()).orElse(new Sound());
-                if (sound.getId() == null || sound.getFilename().isEmpty()) {
+                if (sound.getId() == 0 || sound.getFilename().isEmpty()) {
                     sound.setFilename(file.getOriginalFilename());
                 }
                 sound.setSound(file.getBytes());

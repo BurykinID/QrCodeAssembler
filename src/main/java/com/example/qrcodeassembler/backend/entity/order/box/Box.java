@@ -1,15 +1,23 @@
 package com.example.qrcodeassembler.backend.entity.order.box;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "box")
+@Getter
+@Setter
+@ToString
 public class Box {
 
     @Id
     @Column(unique = true)
     private String numberBox;
     private String status;
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "number_variant")
     private VariantBox variantBox;
@@ -23,31 +31,6 @@ public class Box {
     public Box(String numberBox, String status, VariantBox variantBox) {
         this.numberBox = numberBox;
         this.status = status;
-        this.variantBox = variantBox;
-    }
-
-
-    public String getNumberBox() {
-        return numberBox;
-    }
-
-    public void setNumberBox(String numberBox) {
-        this.numberBox = numberBox;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public VariantBox getVariantBox() {
-        return variantBox;
-    }
-
-    public void setVariantBox(VariantBox variantBox) {
         this.variantBox = variantBox;
     }
 
@@ -76,12 +59,4 @@ public class Box {
         return Objects.hash(numberBox, status, variantBox);
     }
 
-    @Override
-    public String toString() {
-        return "Box=[" +
-                "numberBox=" + numberBox +
-                ",status=" + status +
-                ",variantBox=" + variantBox +
-                "]";
-    }
 }

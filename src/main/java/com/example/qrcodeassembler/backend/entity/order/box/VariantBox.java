@@ -1,11 +1,18 @@
 package com.example.qrcodeassembler.backend.entity.order.box;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity(name = "variant_box")
+@Getter
+@Setter
+@ToString
 public class VariantBox {
 
     @Id
@@ -15,12 +22,15 @@ public class VariantBox {
     private int countInBox;
     private int countBox;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "variantBox")
     private List<Box> boxes;
 
-    @OneToMany(mappedBy = "descriptionBox")
+    @ToString.Exclude
+    @OneToMany(mappedBy = "variantBox")
     private List<DescriptionBox> descriptionBoxes;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "number_order")
     private Order order;
@@ -40,55 +50,6 @@ public class VariantBox {
         this.countBox = countBox;
         this.boxes = boxes;
         this.descriptionBoxes = descriptionBoxes;
-        this.order = order;
-    }
-
-
-    public String getNumberVariant() {
-        return numberVariant;
-    }
-
-    public void setNumberVariant(String numberVariant) {
-        this.numberVariant = numberVariant;
-    }
-
-    public int getCountInBox() {
-        return countInBox;
-    }
-
-    public void setCountInBox(int countInBox) {
-        this.countInBox = countInBox;
-    }
-
-    public int getCountBox() {
-        return countBox;
-    }
-
-    public void setCountBox(int countBox) {
-        this.countBox = countBox;
-    }
-
-    public List<Box> getBoxes() {
-        return boxes;
-    }
-
-    public void setBoxes(List<Box> boxes) {
-        this.boxes = boxes;
-    }
-
-    public List<DescriptionBox> getDescriptionBoxes() {
-        return descriptionBoxes;
-    }
-
-    public void setDescriptionBoxes(List<DescriptionBox> descriptionBoxes) {
-        this.descriptionBoxes = descriptionBoxes;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
         this.order = order;
     }
 
@@ -118,13 +79,4 @@ public class VariantBox {
         return Objects.hash(numberVariant, countInBox, countBox, order);
     }
 
-    @Override
-    public String toString() {
-        return "VariantBox=[" +
-                "numberVariant=" + numberVariant +
-                ",countInBox=" + countBox +
-                ",countBox=" + countBox +
-                ",order=" + order.toString() +
-                "]";
-    }
 }

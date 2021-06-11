@@ -1,21 +1,30 @@
 package com.example.qrcodeassembler.backend.entity.order.box;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity(name = "description_box")
+@Getter
+@Setter
+@ToString
 public class DescriptionBox {
 
     @Id
     @GeneratedValue
-    private UUID id;
+    @ToString.Exclude
+    private long id;
     @NotNull
     private String barcode;
     private int count;
     private int numberLine;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "number_variant")
     private VariantBox variantBox;
@@ -26,45 +35,12 @@ public class DescriptionBox {
         this.numberLine = 0;
     }
 
-    public DescriptionBox(UUID id, String barcode, int count, int numberLine, VariantBox variantBox) {
+    public DescriptionBox(long id, String barcode, int count, int numberLine, VariantBox variantBox) {
         this.id = id;
         this.barcode = barcode;
         this.count = count;
         this.numberLine = numberLine;
         this.variantBox = variantBox;
-    }
-
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    public int getNumberLine() {
-        return numberLine;
-    }
-
-    public void setNumberLine(int numberLine) {
-        this.numberLine = numberLine;
     }
 
 
@@ -82,7 +58,7 @@ public class DescriptionBox {
         }
 
         DescriptionBox castObject = (DescriptionBox) comparedObject;
-        return castObject.getId().equals(id) &&
+        return castObject.getId() == id &&
                 castObject.getBarcode().equals(barcode) &&
                 castObject.getCount() == count &&
                 castObject.getNumberLine() == numberLine;
@@ -93,13 +69,4 @@ public class DescriptionBox {
         return Objects.hash(id, barcode, count, numberLine);
     }
 
-    @Override
-    public String toString() {
-        return "DescriptionBox=[" +
-                "id=" + id +
-                ",barcode=" + barcode +
-                ",count=" + count +
-                ",numberLine=" + numberLine +
-                "]";
-    }
 }

@@ -1,5 +1,9 @@
 package com.example.qrcodeassembler.backend.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -8,11 +12,15 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity(name = "sound")
+@Getter
+@Setter
+@ToString
 public class Sound {
 
     @Id
     @GeneratedValue
-    private UUID id;
+    @ToString.Exclude
+    private long id;
     private String filename;
     private byte[] sound;
 
@@ -21,34 +29,9 @@ public class Sound {
         this.sound = null;
     }
 
-    public Sound(UUID id, String filename, byte[] sound) {
+    public Sound(long id, String filename, byte[] sound) {
         this.id = id;
         this.filename = filename;
-        this.sound = sound;
-    }
-
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    public byte[] getSound() {
-        return sound;
-    }
-
-    public void setSound(byte[] sound) {
         this.sound = sound;
     }
 
@@ -67,7 +50,7 @@ public class Sound {
         }
 
         Sound castObject = (Sound) comparedObject;
-        return castObject.getId().equals(id) &&
+        return castObject.getId() == id &&
                 castObject.getFilename().equals(filename) &&
                 Arrays.equals(castObject.getSound(), sound);
     }
@@ -76,14 +59,4 @@ public class Sound {
     public int hashCode() {
         return Objects.hash(id, filename, sound);
     }
-
-    @Override
-    public String toString() {
-        return "Sound=[" +
-                "id=" + id +
-                ",filename=" + filename +
-                ",sound=" + sound +
-                "]";
-    }
-
 }
