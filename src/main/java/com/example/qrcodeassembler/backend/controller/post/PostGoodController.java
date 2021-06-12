@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class PostGoodController {
@@ -31,15 +32,18 @@ public class PostGoodController {
         long countGoodsBeforeInsert = goodRepository.count();
         List<Good> goodList = new LinkedList<>();
         for (Good good : goods) {
-            Good changesGood = goodRepository.findByBarcode(good.getBarcode()).orElse(new Good());
-            if (!changesGood.getBarcode().isEmpty())
+            Optional<Good> changesGoodFromDataBase = goodRepository.findByBarcode(good.getBarcode());
+            Good changesGood;
+            if (changesGoodFromDataBase.isPresent()) {
+                changesGood = changesGoodFromDataBase.get();
                 changesGood.updateGood(good.getName(), good.getArticle(), good.getColor(), good.getSize());
+            }
             else
                 changesGood = new Good(good.getBarcode(), good.getName(), good.getArticle(), good.getColor(), good.getSize());
             goodList.add(changesGood);
         }
         goodRepository.saveAll(goodList);
         long countInsertInTable = goodRepository.count() - countGoodsBeforeInsert;
-        return new ResponseEntity<>("Добавлено записей: " + countInsertInTable, HttpStatus.OK);
+        return new ResponseEntity<>("Добавлено записей: " + countInsertInTable + "\nОбновлено записей: " + (goods.size() - countInsertInTable), HttpStatus.OK);
     }
 }

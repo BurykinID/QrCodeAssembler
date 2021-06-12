@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class PostMarkController {
@@ -31,15 +32,18 @@ public class PostMarkController {
         long countMarksBeforeInsert = markRepository.count();
         List<Mark> updateMark = new LinkedList<>();
         for (Mark mark: marks) {
-            Mark changesMark = markRepository.findByCis(mark.getCis()).orElse(new Mark());
-            if (!changesMark.getCis().isEmpty())
+            Optional<Mark> changesMarkFromDataBase = markRepository.findByCis(mark.getCis());
+            Mark changesMark;
+            if (changesMarkFromDataBase.isPresent()) {
+                changesMark = changesMarkFromDataBase.get();
                 changesMark.updateMark(mark.getBarcode(), mark.getNumberBox(), mark.getNumberOrder(), mark.getDate());
+            }
             else
                 changesMark = new Mark(mark.getCis(), mark.getBarcode(), mark.getNumberBox(), mark.getNumberOrder(), mark.getDate());
             updateMark.add(changesMark);
         }
         markRepository.saveAll(updateMark);
         long countInsertInTable = markRepository.count() - countMarksBeforeInsert;
-        return new ResponseEntity<>("Добавлено записей: " + countInsertInTable, HttpStatus.OK);
+        return new ResponseEntity<>("Добавлено записей: " + countInsertInTable + "\nОбновлено записей: " + (marks.size() - countInsertInTable), HttpStatus.OK);
     }
 }

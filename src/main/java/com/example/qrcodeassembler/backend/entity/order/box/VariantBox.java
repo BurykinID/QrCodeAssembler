@@ -1,8 +1,6 @@
 package com.example.qrcodeassembler.backend.entity.order.box;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.LinkedList;
@@ -13,6 +11,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@Data
+@NoArgsConstructor
 public class VariantBox {
 
     @Id
@@ -23,11 +23,11 @@ public class VariantBox {
     private int countBox;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "variantBox")
+    @OneToMany(mappedBy = "variantBox", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Box> boxes;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "variantBox")
+    @OneToMany(mappedBy = "variantBox", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<DescriptionBox> descriptionBoxes;
 
     @ToString.Exclude
@@ -35,24 +35,13 @@ public class VariantBox {
     @JoinColumn(name = "number_order")
     private Order order;
 
-    public VariantBox() {
-        this.numberVariant = "";
-        this.countInBox = 0;
-        this.countBox = 0;
-        this.descriptionBoxes = new LinkedList<>();
-        this.boxes = new LinkedList<>();
-        this.order = new Order();
-    }
 
-    public VariantBox(String numberVariant, int countInBox, int countBox, List<Box> boxes, List<DescriptionBox> descriptionBoxes, Order order) {
+    public VariantBox(String numberVariant, int countInBox, int countBox, Order order) {
         this.numberVariant = numberVariant;
         this.countInBox = countInBox;
         this.countBox = countBox;
-        this.boxes = boxes;
-        this.descriptionBoxes = descriptionBoxes;
         this.order = order;
     }
-
 
     @Override
     public boolean equals(Object comparedObject) {
@@ -79,4 +68,9 @@ public class VariantBox {
         return Objects.hash(numberVariant, countInBox, countBox, order);
     }
 
+    public void update(VariantBox variantBox) {
+        this.numberVariant = variantBox.getNumberVariant();
+        this.countInBox = variantBox.getCountInBox();
+        this.countBox = variantBox.getCountBox();
+    }
 }

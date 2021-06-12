@@ -1,16 +1,13 @@
 package com.example.qrcodeassembler.backend.entity;
 
-import com.example.qrcodeassembler.backend.json.HierarchyOfBoxesJson;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -35,6 +32,12 @@ public class HierarchyOfBoxes {
 
     public HierarchyOfBoxes(long id, String numberContainer, String numberBox, Date date) {
         this.id = id;
+        this.numberContainer = numberContainer;
+        this.numberBox = numberBox;
+        this.date = date;
+    }
+
+    public HierarchyOfBoxes(String numberContainer, String numberBox, Date date) {
         this.numberContainer = numberContainer;
         this.numberBox = numberBox;
         this.date = date;
@@ -66,4 +69,12 @@ public class HierarchyOfBoxes {
     public int hashCode() {
         return Objects.hash(id, numberContainer, numberBox, date);
     }
+
+
+    public void update(String numberContainer, String numberBox, Date date) {
+        this.numberContainer = numberContainer;
+        this.numberBox = numberBox;
+        this.date = date;
+    }
+
 }

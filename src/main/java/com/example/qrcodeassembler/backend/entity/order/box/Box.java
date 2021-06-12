@@ -1,8 +1,6 @@
 package com.example.qrcodeassembler.backend.entity.order.box;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -10,6 +8,8 @@ import java.util.Objects;
 @Entity(name = "box")
 @Getter
 @Setter
+@Data
+@NoArgsConstructor
 @ToString
 public class Box {
 
@@ -22,11 +22,6 @@ public class Box {
     @JoinColumn(name = "number_variant")
     private VariantBox variantBox;
 
-    public Box() {
-        numberBox = "";
-        status = "";
-        variantBox = new VariantBox();
-    }
 
     public Box(String numberBox, String status, VariantBox variantBox) {
         this.numberBox = numberBox;

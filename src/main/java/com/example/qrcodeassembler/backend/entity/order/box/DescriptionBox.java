@@ -1,8 +1,6 @@
 package com.example.qrcodeassembler.backend.entity.order.box;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,6 +11,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@Data
+@NoArgsConstructor
 public class DescriptionBox {
 
     @Id
@@ -29,17 +29,11 @@ public class DescriptionBox {
     @JoinColumn(name = "number_variant")
     private VariantBox variantBox;
 
-    public DescriptionBox() {
-        this.barcode = "";
-        this.count = 0;
-        this.numberLine = 0;
-    }
 
-    public DescriptionBox(long id, String barcode, int count, int numberLine, VariantBox variantBox) {
-        this.id = id;
+    public DescriptionBox(String barcode, int numberLine, int count, VariantBox variantBox) {
         this.barcode = barcode;
-        this.count = count;
         this.numberLine = numberLine;
+        this.count = count;
         this.variantBox = variantBox;
     }
 
