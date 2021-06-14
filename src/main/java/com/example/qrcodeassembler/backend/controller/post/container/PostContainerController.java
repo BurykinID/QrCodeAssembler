@@ -41,8 +41,7 @@ public class PostContainerController {
     }
 
     @PostMapping ("insertContainers")
-    public ResponseEntity<String> insertContainers(@RequestBody List<OrderContainerDto> containers) {
-        long countMarksBeforeInsert = orderContainerRepository.count();
+    public void insertContainers(@RequestBody List<OrderContainerDto> containers) {
         List<VariantContainer> variantContainers = new LinkedList<>();
         List<DescriptionContainer> descriptionContainers = new LinkedList<>();
         List<OrderContainer> orderContainers = new LinkedList<>();
@@ -56,20 +55,17 @@ public class PostContainerController {
                     orderContainer.update(orderDto.getDateInObject(),orderDto.getStatus());
                     orderContainerRepository.save(orderContainer);
                     deleteRelatedWithOrderContainerInfo(orderContainer);
-                    updateRelatedWithOrderContainerInfo(variantContainers, descriptionContainers, containerList, orderDto, orderContainer);
                 }
                 else {
                     orderContainer = new OrderContainer(orderDto.getNumber(), orderDto.getDateInObject(), orderDto.getStatus());
                     orderContainers.add(orderContainer);
-                    updateRelatedWithOrderContainerInfo(variantContainers, descriptionContainers, containerList, orderDto, orderContainer);
                 }
+                updateRelatedWithOrderContainerInfo(variantContainers, descriptionContainers, containerList, orderDto, orderContainer);
             } catch (ParseException e) {
-                return new ResponseEntity<>("Incorrect date format" + orderDto.getDate(), HttpStatus.BAD_REQUEST);
+                throw new IllegalStateException("");
             }
         }
         saveOrderInfo(orderContainers, variantContainers, descriptionContainers, containerList);
-        long countInsertInTable = orderContainerRepository.count() - countMarksBeforeInsert;
-        return new ResponseEntity<>("Добавлено записей: " + countInsertInTable + "\nОбновлено записей: " + (containers.size() - countInsertInTable), HttpStatus.OK);
     }
 
 

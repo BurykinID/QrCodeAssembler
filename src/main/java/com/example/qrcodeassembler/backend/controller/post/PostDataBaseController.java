@@ -31,5 +31,4 @@ public class PostDataBaseController {
             return new ResponseEntity<>("Блокировка снята", HttpStatus.OK);
         }
     }
-
 }

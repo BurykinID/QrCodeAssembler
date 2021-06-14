@@ -2,48 +2,33 @@ package com.example.qrcodeassembler.backend.controller.post;
 
 import com.example.qrcodeassembler.backend.entity.Good;
 import com.example.qrcodeassembler.backend.repository.GoodRepository;
+import com.example.qrcodeassembler.backend.service.GoodService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
+@RequestMapping(path = "post/")
 public class PostGoodController {
 
-    private final GoodRepository goodRepository;
+    private final GoodService goodService;
 
-    public PostGoodController (GoodRepository goodRepository) {
-        this.goodRepository = goodRepository;
+    public PostGoodController(GoodService goodService) {
+        this.goodService = goodService;
     }
 
-    @PostMapping("/post/insertGoods")
-    public ResponseEntity<String> insertGoods(@RequestBody List<Good> goods) {
-        goodRepository.saveAll(goods);
-        return new ResponseEntity<>("Товары сохранены в базу данных", HttpStatus.OK);
+    @PostMapping("insertGoods")
+    public void insertGoods(@RequestBody List<Good> goods) {
+        goodService.insertGoods(goods);
     }
 
-    @PostMapping("/post/updateGoods")
-    public ResponseEntity<String> updateGoods(@RequestBody List<Good> goods) {
-        long countGoodsBeforeInsert = goodRepository.count();
-        List<Good> goodList = new LinkedList<>();
-        for (Good good : goods) {
-            Optional<Good> changesGoodFromDataBase = goodRepository.findByBarcode(good.getBarcode());
-            Good changesGood;
-            if (changesGoodFromDataBase.isPresent()) {
-                changesGood = changesGoodFromDataBase.get();
-                changesGood.updateGood(good.getName(), good.getArticle(), good.getColor(), good.getSize());
-            }
-            else
-                changesGood = new Good(good.getBarcode(), good.getName(), good.getArticle(), good.getColor(), good.getSize());
-            goodList.add(changesGood);
-        }
-        goodRepository.saveAll(goodList);
-        long countInsertInTable = goodRepository.count() - countGoodsBeforeInsert;
-        return new ResponseEntity<>("Добавлено записей: " + countInsertInTable + "\nОбновлено записей: " + (goods.size() - countInsertInTable), HttpStatus.OK);
+    @PostMapping("updateGoods")
+    public void updateGoods(@RequestBody List<Good> goods) {
+        goodService.updateExistsGoodOrInsertNewGood(goods);
     }
 }

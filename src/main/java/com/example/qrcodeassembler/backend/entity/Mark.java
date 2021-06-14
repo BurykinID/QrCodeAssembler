@@ -44,11 +44,11 @@ public class Mark {
     }
 
 
-    public void updateMark(String barcode, String numberBox, String numberOrder, Date date) {
-        this.barcode = barcode;
-        this.numberBox = numberBox;
-        this.numberOrder = numberOrder;
-        this.date = date;
+    public void updateMark(Mark mark) {
+        this.barcode = mark.getBarcode();
+        this.numberBox = mark.getNumberBox();
+        this.numberOrder = mark.getNumberOrder();
+        this.date = mark.getDate();
     }
 
 

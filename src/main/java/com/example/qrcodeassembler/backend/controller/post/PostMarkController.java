@@ -2,6 +2,8 @@ package com.example.qrcodeassembler.backend.controller.post;
 
 import com.example.qrcodeassembler.backend.entity.Mark;
 import com.example.qrcodeassembler.backend.repository.MarkRepository;
+import com.example.qrcodeassembler.backend.service.MarkService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,35 +17,20 @@ import java.util.Optional;
 @RestController
 public class PostMarkController {
 
-    private MarkRepository markRepository;
+    private final MarkService markService;
 
-    public PostMarkController (MarkRepository markRepository) {
-        this.markRepository = markRepository;
+    @Autowired
+    public PostMarkController(MarkService markService) {
+        this.markService = markService;
     }
 
     @PostMapping("/post/insertMarks")
-    public ResponseEntity<String> insertMark(@RequestBody List<Mark> marks) {
-        markRepository.saveAll(marks);
-        return new ResponseEntity<>("Марки сохранены в базу данных", HttpStatus.OK);
+    public void insertMark(@RequestBody List<Mark> marks) {
+        markService.insertMark(marks);
     }
 
     @PostMapping("/post/updateMarks")
-    public ResponseEntity<String> updateMark(@RequestBody List<Mark> marks) {
-        long countMarksBeforeInsert = markRepository.count();
-        List<Mark> updateMark = new LinkedList<>();
-        for (Mark mark: marks) {
-            Optional<Mark> changesMarkFromDataBase = markRepository.findByCis(mark.getCis());
-            Mark changesMark;
-            if (changesMarkFromDataBase.isPresent()) {
-                changesMark = changesMarkFromDataBase.get();
-                changesMark.updateMark(mark.getBarcode(), mark.getNumberBox(), mark.getNumberOrder(), mark.getDate());
-            }
-            else
-                changesMark = new Mark(mark.getCis(), mark.getBarcode(), mark.getNumberBox(), mark.getNumberOrder(), mark.getDate());
-            updateMark.add(changesMark);
-        }
-        markRepository.saveAll(updateMark);
-        long countInsertInTable = markRepository.count() - countMarksBeforeInsert;
-        return new ResponseEntity<>("Добавлено записей: " + countInsertInTable + "\nОбновлено записей: " + (marks.size() - countInsertInTable), HttpStatus.OK);
+    public void updateMark(@RequestBody List<Mark> marks) {
+        markService.updateExistsMarkOrInsertNewMark(marks);
     }
 }
