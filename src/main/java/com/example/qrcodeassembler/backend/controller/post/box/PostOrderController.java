@@ -1,17 +1,9 @@
 package com.example.qrcodeassembler.backend.controller.post.box;
 
-import com.example.qrcodeassembler.backend.dto.order.box.BoxDto;
-import com.example.qrcodeassembler.backend.dto.order.box.DescriptionBoxDto;
-import com.example.qrcodeassembler.backend.dto.order.box.VariantBoxDto;
-import com.example.qrcodeassembler.backend.entity.order.box.Box;
-import com.example.qrcodeassembler.backend.entity.order.box.DescriptionBox;
-import com.example.qrcodeassembler.backend.entity.order.box.Order;
-import com.example.qrcodeassembler.backend.entity.order.box.VariantBox;
 import com.example.qrcodeassembler.backend.dto.order.box.OrderDto;
-import com.example.qrcodeassembler.backend.repository.order.box.BoxRepository;
-import com.example.qrcodeassembler.backend.repository.order.box.DescriptionBoxRepository;
+import com.example.qrcodeassembler.backend.entity.order.box.Order;
 import com.example.qrcodeassembler.backend.repository.order.box.OrderRepository;
-import com.example.qrcodeassembler.backend.repository.order.box.VariantsBoxRepository;
+import com.example.qrcodeassembler.backend.service.order.box.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,93 +12,82 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "post/")
 public class PostOrderController {
 
-    private final BoxRepository boxRepository;
-    private final DescriptionBoxRepository descriptionBoxRepository;
-    private final VariantsBoxRepository variantsBoxRepository;
+    private final OrderService orderService;
     private final OrderRepository orderRepository;
 
-    public PostOrderController (BoxRepository boxRepository, DescriptionBoxRepository descriptionBoxRepository, VariantsBoxRepository variantsBoxRepository, OrderRepository orderRepository) {
-        this.boxRepository = boxRepository;
-        this.descriptionBoxRepository = descriptionBoxRepository;
-        this.variantsBoxRepository = variantsBoxRepository;
+    public PostOrderController(OrderService orderService, OrderRepository orderRepository) {
+        this.orderService = orderService;
         this.orderRepository = orderRepository;
     }
 
 
     @PostMapping("insertOrders")
-    public ResponseEntity<String> insertOrders(@RequestBody List<OrderDto> orderDtoList) {
-        long countOrdersBeforeInsert = orderRepository.count();
-        List<Order> orderList = new LinkedList<>();
-        List<VariantBox> variantBoxes = new LinkedList<>();
-        List<DescriptionBox> descriptionBoxes = new LinkedList<>();
-        List<Box> boxList = new LinkedList<>();
-        for (OrderDto orderDto : orderDtoList) {
-            try {
-                Optional<Order> orderFromDataBase = orderRepository.findByNumber(orderDto.getNumber());
-                Order order;
-                if (orderFromDataBase.isPresent()) {
-                    order = orderFromDataBase.get();
-                    order.update(orderDto.convertDate(), orderDto.getStatus());
-                    orderRepository.save(order);
-                    deleteRelatedWithOrderInfo(order);
-                    updateRelatedWithOrderInfo(variantBoxes, descriptionBoxes, boxList, orderDto, order);
-                }
-                else {
-                    order = convertToOrder(orderDto);
-                    orderList.add(order);
-                    updateRelatedWithOrderInfo(variantBoxes, descriptionBoxes, boxList, orderDto, order);
-                }
-            } catch (ParseException e) {
-                return new ResponseEntity<>("Incorrect data format.", HttpStatus.BAD_REQUEST);
-            }
-        }
-        saveOrderInfo(orderList, variantBoxes, descriptionBoxes, boxList);
-        long countInsertInTable = orderRepository.count() - countOrdersBeforeInsert;
-        return new ResponseEntity<>("Добавлено записей: " + countInsertInTable + "\nОбновлено записей: " + (orderDtoList.size() - countInsertInTable), HttpStatus.OK);
+    public void insertOrders(@RequestBody List<OrderDto> orderDtoList) {
+        orderService.insertOrders(getNewOrders(orderDtoList));
     }
 
     @PostMapping("updateOrders")
     public ResponseEntity<String> updateOrders(@RequestBody List<OrderDto> orderDtoList) {
-        long countOrdersBeforeInsert = orderRepository.count();
-        List<VariantBox> variantBoxes = new LinkedList<>();
-        List<DescriptionBox> descriptionBoxes = new LinkedList<>();
-        List<Box> boxList = new LinkedList<>();
-        for (OrderDto orderDto : orderDtoList) {
-            try {
-                Optional<Order> optionalOrder = orderRepository.findByNumber(orderDto.getNumber());
-                Order order;
-                if (optionalOrder.isPresent()) {
-                    order = optionalOrder.get();
-                    order.update(orderDto.convertDate(), orderDto.getStatus());
-                }
-                else {
-                    order = convertToOrder(orderDto);
-                }
-                orderRepository.save(order);
-                deleteRelatedWithOrderInfo(order);
-                updateRelatedWithOrderInfo(variantBoxes, descriptionBoxes, boxList, orderDto, order);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        Map<Boolean, List<OrderDto>> orderSortedByPresentInDataBase = orderDtoList.stream()
+                .collect(Collectors.partitioningBy(orderService::isOrderPresentInDataBase));
+        List<Order> newOrders = getNewOrders(orderSortedByPresentInDataBase.get(false));
+        List<Order> orderForUpdate = getOrderForUpdate(orderSortedByPresentInDataBase.get(true));
+
+        StringBuilder response = new StringBuilder("Result request: \r\n");
+        if (newOrders.size() == orderSortedByPresentInDataBase.get(false).size()) {
+            orderService.insertOrders(newOrders);
+            response.append("1. New orders were inserted.\r\n");
         }
-        variantsBoxRepository.saveAll(variantBoxes);
-        descriptionBoxRepository.saveAll(descriptionBoxes);
-        boxRepository.saveAll(boxList);
-        long countInsertInTable = orderRepository.count() - countOrdersBeforeInsert;
-        return new ResponseEntity<>("Добавлено записей: " + countInsertInTable + "\nОбновлено записей: " + (orderDtoList.size() - countInsertInTable), HttpStatus.OK);
+        else {
+            response.append("1. When do new orders insert was throw Parse exception. You must check data format.\r\n");
+        }
+        if (orderForUpdate.size() == orderSortedByPresentInDataBase.get(true).size()) {
+            orderService.updateOrders(orderForUpdate);
+            response.append("2. Old orders were updated.\r\n");
+        }
+        else {
+            response.append("2. When do old orders update was throw Parse exception. You must check data format.\r\n");
+        }
+        return new ResponseEntity<>(response.toString(), HttpStatus.OK);
     }
 
 
-    public void saveOrderInfo (List<Order> orderList,
+    private List<Order> getNewOrders(List<OrderDto> newDtoOrders) {
+        return newDtoOrders.stream()
+                .map(dto -> {
+                    try {
+                        return dto.convertDtoToObject();
+                    } catch (ParseException e) {
+                        return new Order();
+                    }
+                })
+                .filter(order -> order.getNumber() != null)
+                .collect(Collectors.toList());
+    }
+
+    private List<Order> getOrderForUpdate(List<OrderDto> orderDtoForUpdate) {
+        return orderDtoForUpdate.stream()
+                .map(dto -> {
+                    Order order = orderRepository.findByNumber(dto.getNumber()).get();
+                    try {
+                        order.update(dto.convertDate(), dto.getStatus());
+                        return order;
+                    } catch (ParseException e) {
+                        return new Order();
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+
+/*    public void saveOrderInfo (List<Order> orderList,
                                List<VariantBox> variantBoxes,
                                List<DescriptionBox> descriptionBoxes,
                                List<Box> boxList) {
@@ -128,7 +109,7 @@ public class PostOrderController {
         List<VariantBox> variantBoxesForDelete = variantsBoxRepository.findByOrderNumber(order.getNumber());
 
         for (VariantBox varBox : variantBoxesForDelete)
-            boxRepository.deleteByVariantBox(varBox);
+            boxRepository.deleteBoxByVariantBox(varBox);
 
         for (VariantBox varBox : variantBoxesForDelete)
             descriptionBoxRepository.deleteByNumberVariant(varBox);
@@ -178,6 +159,6 @@ public class PostOrderController {
             boxes.add(box);
         }
         return boxes;
-    }
+    }*/
 
 }

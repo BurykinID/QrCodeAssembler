@@ -1,5 +1,9 @@
 package com.example.qrcodeassembler.backend.dto.order.box;
 
+import com.example.qrcodeassembler.backend.entity.order.box.Box;
+import com.example.qrcodeassembler.backend.entity.order.box.DescriptionBox;
+import com.example.qrcodeassembler.backend.entity.order.box.Order;
+import com.example.qrcodeassembler.backend.entity.order.box.VariantBox;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -27,6 +32,10 @@ public class OrderDto {
 
     public Date convertDate() throws ParseException {
         return dateFormat.parse(date);
+    }
+
+    public Order convertDtoToObject() throws ParseException {
+        return new Order(number, status, convertDate());
     }
 
 }

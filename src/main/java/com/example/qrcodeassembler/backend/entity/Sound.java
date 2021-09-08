@@ -1,8 +1,6 @@
 package com.example.qrcodeassembler.backend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +12,8 @@ import java.util.UUID;
 @Entity(name = "sound")
 @Getter
 @Setter
+@Data
+@NoArgsConstructor
 @ToString
 public class Sound {
 
@@ -24,17 +24,12 @@ public class Sound {
     private String filename;
     private byte[] sound;
 
-    public Sound() {
-        this.filename = "";
-        this.sound = null;
-    }
 
     public Sound(long id, String filename, byte[] sound) {
         this.id = id;
         this.filename = filename;
         this.sound = sound;
     }
-
 
     @Override
     public boolean equals(Object comparedObject) {

@@ -1,7 +1,7 @@
 package com.example.qrcodeassembler.backend.controller.post.container;
 
 import com.example.qrcodeassembler.backend.dto.HierarchyOfBoxesDto;
-import com.example.qrcodeassembler.backend.service.HierarchyOfBoxesService;
+import com.example.qrcodeassembler.backend.service.item.HierarchyOfBoxesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

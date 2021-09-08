@@ -1,4 +1,4 @@
-package com.example.qrcodeassembler.backend.service;
+package com.example.qrcodeassembler.backend.service.item;
 
 import com.example.qrcodeassembler.backend.dto.assembledContainerAndBox.MarkDto;
 import com.example.qrcodeassembler.backend.entity.Mark;
@@ -32,24 +32,25 @@ public class MarkService {
         return markDtoList;
     }
 
-    public void updateExistsMarkOrInsertNewMark(List<Mark> marks) {
+    public void updateMark(List<Mark> marks) {
         List<Mark> markForUpdate = new ArrayList<>();
         for (Mark mark: marks) {
-            Optional<Mark> optionalMark = markRepository.findByCis(mark.getCis());
-            Mark changesMark;
-            if (optionalMark.isPresent()) {
-                changesMark = optionalMark.get();
-                changesMark.updateMark(mark);
-            }
-            else {
-                changesMark = new Mark(mark.getCis(), mark.getBarcode(), mark.getNumberBox(), mark.getNumberOrder(), mark.getDate());
-            }
-            markForUpdate.add(changesMark);
+            Optional<Mark> markFromDataBase = markRepository.findByCis(mark.getCis());
+            markFromDataBase.ifPresent(
+                    updateMark -> {
+                        updateMark.updateMark(mark);
+                        markForUpdate.add(updateMark);
+                    }
+            );
         }
         markRepository.saveAll(markForUpdate);
     }
 
     public void insertMark(List<Mark> marks) {
         markRepository.saveAll(marks);
+    }
+
+    public boolean isMarkInDataBase(Mark mark) {
+        return markRepository.findByCis(mark.getCis()).isPresent();
     }
 }

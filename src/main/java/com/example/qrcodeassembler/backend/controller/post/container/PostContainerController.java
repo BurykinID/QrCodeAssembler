@@ -62,7 +62,7 @@ public class PostContainerController {
                 }
                 updateRelatedWithOrderContainerInfo(variantContainers, descriptionContainers, containerList, orderDto, orderContainer);
             } catch (ParseException e) {
-                throw new IllegalStateException("");
+                throw new IllegalStateException("Error parse date. Please check date format and try again. Error occurred with " + e.getMessage());
             }
         }
         saveOrderInfo(orderContainers, variantContainers, descriptionContainers, containerList);
@@ -71,8 +71,7 @@ public class PostContainerController {
 
 
     @PostMapping ("updateContainers")
-    public ResponseEntity<String> updateContainers(@RequestBody List<OrderContainerDto> containers) {
-        long countOrderContainersBeforeInsert = orderContainerRepository.count();
+    public void updateContainers(@RequestBody List<OrderContainerDto> containers) {
         List<VariantContainer> variantContainers = new LinkedList<>();
         List<DescriptionContainer> descriptionContainers = new LinkedList<>();
         List<Container> containerList = new LinkedList<>();
@@ -97,8 +96,6 @@ public class PostContainerController {
         variantsContainerRepository.saveAll(variantContainers);
         descriptionContainerRepository.saveAll(descriptionContainers);
         containerRepository.saveAll(containerList);
-        long countInsertInTable = orderContainerRepository.count() - countOrderContainersBeforeInsert;
-        return new ResponseEntity<>("Добавлено записей: " + countInsertInTable + "\nОбновлено записей: " + (containers.size() - countInsertInTable), HttpStatus.OK);
     }
 
 

@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 @NoArgsConstructor
 public class MarkDto {
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private String cis;
     private String numberBox;

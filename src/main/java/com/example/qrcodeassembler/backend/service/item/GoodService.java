@@ -1,4 +1,4 @@
-package com.example.qrcodeassembler.backend.service;
+package com.example.qrcodeassembler.backend.service.item;
 
 import com.example.qrcodeassembler.backend.entity.Good;
 import com.example.qrcodeassembler.backend.repository.GoodRepository;
@@ -8,6 +8,11 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.reducing;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class GoodService {
@@ -24,19 +29,25 @@ public class GoodService {
         goodRepository.saveAll(goods);
     }
 
-    public void updateExistsGoodOrInsertNewGood(List<Good> goods) {
+    public void updateGood(List<Good> goods) {
         List<Good> goodList = new ArrayList<>();
         for (Good good : goods) {
             Optional<Good> changesGoodFromDataBase = goodRepository.findByBarcode(good.getBarcode());
-            Good changesGood;
-            if (changesGoodFromDataBase.isPresent()) {
-                changesGood = changesGoodFromDataBase.get();
-                changesGood.updateGood(good.getName(), good.getArticle(), good.getColor(), good.getSize());
-            }
-            else
-                changesGood = new Good(good.getBarcode(), good.getName(), good.getArticle(), good.getColor(), good.getSize());
-            goodList.add(changesGood);
+            changesGoodFromDataBase.ifPresent(
+                    updateGood -> {
+                        updateGood.updateGood(good.getName(), good.getArticle(), good.getColor(), good.getSize());
+                        goodList.add(updateGood);
+                    }
+            );
         }
         goodRepository.saveAll(goodList);
     }
+
+    public boolean isGoodInDataBase(Good good) {
+        return goodRepository.findByBarcode(good.getBarcode()).isPresent();
+    }
+
+
+
+
 }

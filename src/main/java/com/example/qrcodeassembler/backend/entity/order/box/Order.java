@@ -44,7 +44,6 @@ public class Order {
         this.date = date;
     }
 
-
     @Override
     public boolean equals(Object comparedObject) {
         if (this == comparedObject) {

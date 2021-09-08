@@ -43,6 +43,13 @@ public class VariantBox {
         this.order = order;
     }
 
+    public VariantBox(String numberVariant, int countInBox, int countBox) {
+        this.numberVariant = numberVariant;
+        this.countInBox = countInBox;
+        this.countBox = countBox;
+    }
+
+
     @Override
     public boolean equals(Object comparedObject) {
         if (this == comparedObject) {

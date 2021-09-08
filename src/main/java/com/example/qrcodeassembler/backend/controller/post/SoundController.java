@@ -1,7 +1,6 @@
 package com.example.qrcodeassembler.backend.controller.post;
 
-import com.example.qrcodeassembler.backend.repository.SoundRepository;
-import com.example.qrcodeassembler.backend.service.SoundService;
+import com.example.qrcodeassembler.backend.service.order.SoundService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,4 +1,4 @@
-package com.example.qrcodeassembler.backend.service;
+package com.example.qrcodeassembler.backend.service.item;
 
 import com.example.qrcodeassembler.backend.dto.HierarchyOfBoxesDto;
 import com.example.qrcodeassembler.backend.dto.assembledContainerAndBox.HierarchyOfBoxDto;
@@ -25,19 +25,20 @@ public class HierarchyOfBoxesService {
         ArrayList<HierarchyOfBoxes> hierarchyOfBoxes = new ArrayList<>();
         for (HierarchyOfBoxesDto hierarchyOfBoxesDto : hierarchyList) {
             Optional<HierarchyOfBoxes> hierarchyOfBoxesFromDataBase = hierarchyOfBoxesRepository.findByNumberContainerAndNumberBox(hierarchyOfBoxesDto.getNumberContainer(), hierarchyOfBoxesDto.getNumberBox());
-            HierarchyOfBoxes hierarchyOfBox;
             try {
                 Date date = hierarchyOfBoxesDto.convertDate();
-                if (hierarchyOfBoxesFromDataBase.isPresent()) {
-                    hierarchyOfBox = hierarchyOfBoxesFromDataBase.get();
-                    hierarchyOfBox.update(hierarchyOfBoxesDto.getNumberContainer(), hierarchyOfBoxesDto.getNumberBox(), date);
-                }
-                else {
-                    hierarchyOfBox = new HierarchyOfBoxes(hierarchyOfBoxesDto.getNumberContainer(), hierarchyOfBoxesDto.getNumberBox(), date);
-                }
-                hierarchyOfBoxes.add(hierarchyOfBox);
+                hierarchyOfBoxesFromDataBase.ifPresentOrElse(
+                        hierarchyOfBoxesForUpdate -> {
+                            hierarchyOfBoxesForUpdate.update(hierarchyOfBoxesDto.getNumberContainer(), hierarchyOfBoxesDto.getNumberBox(), date);
+                            hierarchyOfBoxes.add(hierarchyOfBoxesForUpdate);
+                        },
+                        () -> {
+                            HierarchyOfBoxes hierarchyOfBox = new HierarchyOfBoxes(hierarchyOfBoxesDto.getNumberContainer(), hierarchyOfBoxesDto.getNumberBox(), date);
+                            hierarchyOfBoxes.add(hierarchyOfBox);
+                        }
+                );
             } catch (ParseException e) {
-                throw new IllegalStateException("In a " + hierarchyOfBoxesDto.toString() + " have a problem with a date format. " +
+                throw new IllegalStateException("In a " + hierarchyOfBoxesDto + " have a problem with a date format. " +
                         "Please correct it and try again. Info in a database didn't change.");
             }
         }
@@ -54,7 +55,4 @@ public class HierarchyOfBoxesService {
         }
         return containerDtoList;
     }
-
-
-
 }

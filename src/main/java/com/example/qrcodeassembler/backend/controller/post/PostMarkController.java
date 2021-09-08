@@ -1,18 +1,15 @@
 package com.example.qrcodeassembler.backend.controller.post;
 
 import com.example.qrcodeassembler.backend.entity.Mark;
-import com.example.qrcodeassembler.backend.repository.MarkRepository;
-import com.example.qrcodeassembler.backend.service.MarkService;
+import com.example.qrcodeassembler.backend.service.item.MarkService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class PostMarkController {
@@ -31,6 +28,8 @@ public class PostMarkController {
 
     @PostMapping("/post/updateMarks")
     public void updateMark(@RequestBody List<Mark> marks) {
-        markService.updateExistsMarkOrInsertNewMark(marks);
+        Map<Boolean, List<Mark>> sortedMarkByPresentInDataBase = marks.stream().collect(Collectors.partitioningBy(markService::isMarkInDataBase));
+        markService.insertMark(sortedMarkByPresentInDataBase.get(false));
+        markService.updateMark(sortedMarkByPresentInDataBase.get(true));
     }
 }

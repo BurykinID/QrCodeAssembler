@@ -1,8 +1,8 @@
 package com.example.qrcodeassembler.backend.controller.get;
 
 import com.example.qrcodeassembler.backend.dto.assembledContainerAndBox.AssembledMarkAndContainerDto;
-import com.example.qrcodeassembler.backend.service.HierarchyOfBoxesService;
-import com.example.qrcodeassembler.backend.service.MarkService;
+import com.example.qrcodeassembler.backend.service.item.HierarchyOfBoxesService;
+import com.example.qrcodeassembler.backend.service.item.MarkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

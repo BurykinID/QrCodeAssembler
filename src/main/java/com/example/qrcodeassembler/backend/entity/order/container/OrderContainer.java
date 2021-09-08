@@ -34,6 +34,11 @@ public class OrderContainer {
         this.status = status;
     }
 
+    public OrderContainer(OrderContainer orderContainer) {
+        this.number = orderContainer.number;
+        this.date = orderContainer.date;
+        this.status = orderContainer.status;
+    }
 
     @Override
     public boolean equals(Object o) {
