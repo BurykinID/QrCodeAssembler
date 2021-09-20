@@ -47,7 +47,4 @@ public class GoodService {
         return goodRepository.findByBarcode(good.getBarcode()).isPresent();
     }
 
-
-
-
 }

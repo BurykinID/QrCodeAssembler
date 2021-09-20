@@ -12,11 +12,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity(name = "ord")
-@Getter
-@Setter
-@ToString
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
 public class Order {
 
     @Id
@@ -31,42 +28,10 @@ public class Order {
     private List<VariantBox> variantBoxes;
 
 
-    public Order(String number, String status, Date date, List<VariantBox> variantBoxes) {
-        this.number = number;
-        this.status = status;
-        this.date = date;
-        this.variantBoxes = variantBoxes;
-    }
-
     public Order(String number, String status, Date date) {
         this.number = number;
         this.status = status;
         this.date = date;
-    }
-
-    @Override
-    public boolean equals(Object comparedObject) {
-        if (this == comparedObject) {
-            return true;
-        }
-
-        if (comparedObject == null) {
-            return false;
-        }
-        else if (getClass() != comparedObject.getClass()) {
-            return false;
-        }
-
-        Order castObject = (Order) comparedObject;
-
-        return castObject.getNumber().equals(number) &&
-                castObject.getStatus().equals(status) &&
-                castObject.getDate().equals(date);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(number, status, date);
     }
 
     public void update(Date date, String status) {

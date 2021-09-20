@@ -6,11 +6,8 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Getter
-@Setter
 @Data
 @NoArgsConstructor
-@ToString
 public class DescriptionContainer {
 
     @Id
@@ -31,22 +28,5 @@ public class DescriptionContainer {
         this.numberVariantBox = numberVariantBox;
         this.count = count;
         this.variantContainer = variantContainer;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DescriptionContainer descriptionContainer = (DescriptionContainer) o;
-        return numberLine == descriptionContainer.numberLine &&
-                count == descriptionContainer.count &&
-                id.equals(descriptionContainer.id) &&
-                numberVariantBox.equals(descriptionContainer.numberVariantBox);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, numberLine, numberVariantBox, count);
     }
 }

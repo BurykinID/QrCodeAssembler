@@ -10,11 +10,8 @@ import java.util.Objects;
 
 @Entity
 @Table (name = "ord_pack")
-@Getter
-@Setter
 @Data
 @NoArgsConstructor
-@ToString
 public class OrderContainer {
 
     @Id
@@ -38,21 +35,6 @@ public class OrderContainer {
         this.number = orderContainer.number;
         this.date = orderContainer.date;
         this.status = orderContainer.status;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrderContainer orderContainer = (OrderContainer) o;
-        return number.equals(orderContainer.number) &&
-                Objects.equals(date, orderContainer.date) &&
-                Objects.equals(status, orderContainer.status);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(number, date, status);
     }
 
     public void update(Date date, String status) throws ParseException {

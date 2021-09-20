@@ -7,11 +7,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Getter
-@Setter
 @Data
 @NoArgsConstructor
-@ToString
 public class VariantContainer {
 
     @Id
@@ -41,19 +38,4 @@ public class VariantContainer {
         this.orderContainer = orderContainer;
     }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        VariantContainer variantContainer = (VariantContainer) o;
-        return countInBox == variantContainer.countInBox &&
-                countBox == variantContainer.countBox &&
-                Objects.equals(numberVariant, variantContainer.numberVariant);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(numberVariant, countInBox, countBox);
-    }
 }
